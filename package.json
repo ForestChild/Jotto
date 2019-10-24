@@ -1,0 +1,15 @@
+{
+  "name": "Jotto",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "cole",
+  "license": "MIT",
+  "devDependencies": {
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "jest-enzyme": "^7.1.1"
+  },
+  "dependencies": {
+    "react-dom": "^16.10.2"
+  }
+}
