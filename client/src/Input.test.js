@@ -101,4 +101,8 @@ describe("guessWord action creator tests", () => {
 		console.log(guessWordMock.mock);
 		expect(guessWordArg).toBe(guessedWord);
 	});
+
+	test("Input box is set to empty after entering a guess", () => {
+		expect(wrapper.state("currentGuess")).toBe("");
+	});
 });

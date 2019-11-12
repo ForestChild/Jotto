@@ -15,6 +15,7 @@ export class UnconnectedInput extends Component {
 
 		if(guessedWord && guessedWord.length > 0) {
 		this.props.guessWord(guessedWord);
+		this.setState({ currentGuess: "" });
 		}
 	};
 
@@ -43,7 +44,6 @@ export class UnconnectedInput extends Component {
 		return (
 			<div data-test="component-input">
 				{ contents }
-				<button />
 			</div>
 			)
 
