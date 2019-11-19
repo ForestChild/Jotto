@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { GuessCounter } from "./GuessCounter";
 
 const GuessedWords = (props) => {
 	let contents;
@@ -13,16 +14,17 @@ const GuessedWords = (props) => {
 	} else {
 		const guessedWordsRows = props.guessedWords.map((word, index) => (
 			<tr data-test="guessed-word" key={index}>
+				<td>{index +1}</td>
 				<td>{word.guessedWord}</td>
 				<td>{word.letterMatchCount}</td>
 			</tr>
 		))
 		contents = (
-			<div data-test="guessed-words">
-				<h3>Guessed Words</h3>
-				<table className="table table-sm">
+			<div className="tableContainer" data-test="guessed-words">
+				<h3 id="guessedWords">Guessed Words</h3>
+				<table className="table table-bordered table-striped mb-0">
 					<thead className="thead-light">
-						<tr><th>Guess</th><th>Matching Letters</th></tr>
+						<tr><th>Guess #</th><th>Guess</th><th>Matching Letters</th></tr>
 					</thead>
 					<tbody>
 						{ guessedWordsRows }
@@ -34,6 +36,7 @@ const GuessedWords = (props) => {
 	return (
 		<div data-test="component-guessed-words" >
 			{contents}
+			<GuessCounter guessedWords={props.guessedWords} />
 		</div>
 	);
 };

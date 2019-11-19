@@ -4,16 +4,10 @@ import { getLetterMatchCount } from "../helpers";
 export const actionTypes = {
 	CORRECT_GUESS: "CORRECT_GUESS",
 	GUESS_WORD: "GUESS_WORD",
+	RESET_GUESSED_WORDS: "RESET_GUESSED_WORDS",
+	GIVE_UP: "GIVE_UP",
 	SET_SECRET_WORD: "SET_SECRET_WORD"
 };
-
-/**
-*@function correctGuess
-*@returns {object} - action object with type "CORRECT_GUESS"
-*/
-// export function correctGuess() {
-// 	return { type: actionTypes.CORRECT_GUESS };
-// }
 
 /**
 *Returns redux thunk function that dispatches GUESS_WORD action
@@ -46,6 +40,23 @@ export const getSecretWord = () => {
 					type: actionTypes.SET_SECRET_WORD,
 					payload: response.data
 				});
+				//hasGivenUp is set to false because we only get a secret word if we are starting a new game
+				dispatch({
+					type:actionTypes.GIVE_UP,
+					payload: false
+				});
+				//resets the table of guessed words
+				dispatch({
+					type: actionTypes.RESET_GUESSED_WORDS
+				})
 			});
 	}
+}
+
+export const giveUp = (state=false) => {
+	//state should either be true or false, toggles whether or not the user has forfeit
+	return { 
+		type: actionTypes.GIVE_UP,
+		payload: state
+		};
 }

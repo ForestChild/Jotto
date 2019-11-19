@@ -36,8 +36,21 @@ describe("render", () => {
 			const submitButton = findByTestAttr(wrapper, "submit-button");
 			expect(submitButton.length).toBe(1);
 		});
+		test("does not render give up button if there are 0 guesses", () => {
+			const initialState = { success: false, guessedWords: []};
+			const wrapper = setup(initialState);
+			const giveUpButton = findByTestAttr(wrapper, "give-up-button");
+			expect(giveUpButton.length).toBe(0);
+		});
+		test("renders give up button if there is more than 1 guess", () => {
+			const initialState = { success: false, guessedWords: [{guessedWord: "train", letterMatchCount: 3}]};
+			const wrapper = setup(initialState);
+			const giveUpButton = findByTestAttr(wrapper, "give-up-button");
+			expect(giveUpButton.length).toBe(1);
+		});
 	});
-	describe("word has been guessed", () => {
+
+	describe("secret word has been guessed correctly", () => {
 		let wrapper;
 		beforeEach(() => {
 			const initialState = { success: true };
@@ -47,6 +60,10 @@ describe("render", () => {
 			const component = findByTestAttr(wrapper, "component-input");
 			expect(component.length).toBe(1);
 		});
+		test("renders new word button", () => {
+			const newWordButton = findByTestAttr(wrapper, "new-word-button");
+			expect(newWordButton.length).toBe(1);
+		});
 		test("does not render input box", () => {
 			const inputBox = findByTestAttr(wrapper, "input-box");
 			expect(inputBox.length).toBe(0);
@@ -54,6 +71,10 @@ describe("render", () => {
 		test("does not render submit button", () => {
 			const submitButton = findByTestAttr(wrapper, "submit-button");
 			expect(submitButton.length).toBe(0);
+		});
+		test("does not render give up button", () => {
+			const giveUpButton = findByTestAttr(wrapper, "give-up-button");
+			expect(giveUpButton.length).toBe(0);
 		});
 	});
 });
@@ -69,6 +90,18 @@ describe("redux props", () => {
 		const guessWordProp = wrapper.instance().props.guessWord;
 		expect(guessWordProp).toBeInstanceOf(Function);
 	});
+	test("has guessedWords piece of state as a prop", () => {
+		const guessedWords = [{ guessedWord: "train", letterMatchCount: 3}];
+		const wrapper = setup({guessedWords});
+		const guessedWordsProp = wrapper.instance().props.guessedWords;
+		expect(guessedWordsProp).toBe(guessedWords);
+	})
+	test("has hasGivenUp piece of state as a prop", () => {
+		const hasGivenUp = false;
+		const wrapper = setup({ hasGivenUp });
+		const hasGivenUpProp = wrapper.instance().props.hasGivenUp;
+		expect(hasGivenUpProp).toBe(hasGivenUp);
+	});
 });
 
 describe("guessWord action creator tests", () => {
@@ -78,7 +111,6 @@ describe("guessWord action creator tests", () => {
 	beforeEach(() => {
 		//create mock action creator and construct mock prop object
 		guessWordMock = jest.fn();
-		//const props = { guessWord: guessWordMock };
 
 		//create shallow wrapper
 		wrapper = shallow(<UnconnectedInput guessWord={guessWordMock} />);
@@ -91,18 +123,41 @@ describe("guessWord action creator tests", () => {
 	});
 
 	test("guessWord is called correctly", () => {
-		//wrapper.instance().onSubmitClick();
 		const guessWordMockCallCount = guessWordMock.mock.calls.length;
 		expect(guessWordMockCallCount).toBe(1);
 	});
 
 	test("guessWord receives input value as argument(guessedWord)", () => {
 		const guessWordArg = guessWordMock.mock.calls[0][0];
-		console.log(guessWordMock.mock);
 		expect(guessWordArg).toBe(guessedWord);
 	});
 
 	test("Input box is set to empty after entering a guess", () => {
 		expect(wrapper.state("currentGuess")).toBe("");
+	});
+});
+
+describe("giveUp action creator tests", () => {
+	test("giveUp is called correctly", () => {
+		const giveUpMock = jest.fn();
+		const guessedWords = [{guessedWord: "train", letterMatchCount: 3}];
+		const wrapper = shallow(<UnconnectedInput giveUp={giveUpMock} guessedWords={guessedWords} />);
+		const giveUpButton = findByTestAttr(wrapper, "give-up-button");
+		giveUpButton.simulate("click", { preventDefault() {}});
+		const giveUpCallCount = giveUpMock.mock.calls.length;
+		expect(giveUpCallCount).toBe(1);
+	});
+	
+});
+
+describe("getSecretWord action creator tests", () => {
+	test("new word button calls getSecretWord and giveUp correctly", () => {
+		const getSecretWordMock = jest.fn();
+		const success = true;
+		const wrapper = shallow(<UnconnectedInput getSecretWord={getSecretWordMock} success={success} />);
+		const newWordButton = findByTestAttr(wrapper, "new-word-button");
+		newWordButton.simulate("click", { preventDefault() {}});
+		const getSecretWordMockCallCount = getSecretWordMock.mock.calls.length;
+		expect(getSecretWordMockCallCount).toBe(1);
 	});
 });
